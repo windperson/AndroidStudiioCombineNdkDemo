@@ -1,4 +1,4 @@
-package tw.idv.windperson.androidstudiiocombinendkdemo;
+package tw.idv.windperson.androidstudiocombinendkdemo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

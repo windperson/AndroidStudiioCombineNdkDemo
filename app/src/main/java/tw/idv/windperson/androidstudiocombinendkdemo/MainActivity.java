@@ -1,4 +1,4 @@
-package tw.idv.windperson.androidstudiiocombinendkdemo;
+package tw.idv.windperson.androidstudiocombinendkdemo;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     static {
         System.loadLibrary("native-lib");
     }
+
+    private static String TAG = "MainActivity(Java)";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +43,14 @@ public class MainActivity extends AppCompatActivity {
         SetupC2Jbtn();
     }
 
-    private void SetupC2Jbtn(){
+    private void SetupC2Jbtn() {
         Button invokeBtn = (Button) findViewById(R.id.demo_c2j);
-        if(invokeBtn == null){
-            return;
-        }
-        invokeBtn.setOnClickListener(new View.OnClickListener(){
+
+        invokeBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                beginJNIcallJavaDemo();
+                beginJNIcallJavaDemo("Java");
             }
         });
     }
@@ -82,5 +83,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
-    private native void beginJNIcallJavaDemo();
+    private static native void beginJNIcallJavaDemo(String prefix);
+
 }

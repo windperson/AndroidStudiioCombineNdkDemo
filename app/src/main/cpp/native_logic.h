@@ -1,14 +1,29 @@
 //
 // Created by windperson on 10/7/2016.
 //
+#include <jni.h>
+#include <string>
 
-#ifndef ANDROIDSTUDIIOCOMBINENDKDEMO_NATIVE_LOGIC_H
-#define ANDROIDSTUDIIOCOMBINENDKDEMO_NATIVE_LOGIC_H
+extern "C"
+JNIEXPORT
+void Java_tw_idv_windperson_androidstudiocombinendkdemo_MainActivity_beginJNIcallJavaDemo(
+        JNIEnv *env,
+        jobject /* this */,
+        jstring prefix);
+
+#ifndef ANDROIDSTUDIOCOMBINENDKDEMO_NATIVE_LOGIC_H
+#define ANDROIDSTUDIOCOMBINENDKDEMO_NATIVE_LOGIC_H
 
 
-class native_logic {
-
+class Native_logic {
+private:
+    JNIEnv *_env;
+    std::string _classPath;
+    jclass initJavaClassRef();
+public:
+    Native_logic(JNIEnv*,std::string);
+    void invokeJavaMethod(std::string, const char* , std::string);
 };
 
 
-#endif //ANDROIDSTUDIIOCOMBINENDKDEMO_NATIVE_LOGIC_H
+#endif //ANDROIDSTUDIOCOMBINENDKDEMO_NATIVE_LOGIC_H
