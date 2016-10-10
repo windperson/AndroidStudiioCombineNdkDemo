@@ -14,28 +14,41 @@ using namespace std;
 Native_caller::Native_caller(JNIEnv *env, string classPath) {
     this->_env = env;
     this->_classPath = classPath;
+    this->_calleeClass = initJavaClassRef();
 }
-
 
 jclass Native_caller::initJavaClassRef() {
     jclass javaClass = this->_env->FindClass(this->_classPath.c_str());
-    return (jclass) this->_env->NewGlobalRef(javaClass);
+    if (this->_env->ExceptionCheck()){
+        this->_env->ExceptionClear();
+        return JNI_FALSE;
+    }
+    jclass ret = reinterpret_cast<jclass>( this->_env->NewGlobalRef(javaClass));
+    return ret;
+}
+
+Native_caller::~Native_caller() {
+    if(this->_calleeClass != NULL){
+        this->_env->DeleteGlobalRef(this->_calleeClass);
+    }
 }
 
 void Native_caller::invokeJavaMethod(string methodName, const char *methodSignatureCode,
                                     string input_arg) {
     LOGINFO("input_arg=%s", input_arg.c_str());
 
-    jclass javaClass = this->initJavaClassRef();
-
     // in this demo the method signature code should be "(java/lang/String;)V"
-    jmethodID javaMethodRef = this->_env->GetMethodID(javaClass, methodName.c_str(),
+    jmethodID javaMethodRef = this->_env->GetMethodID(this->_calleeClass, methodName.c_str(),
                                                       methodSignatureCode);
 
-    jmethodID javaClassConstructor = this->_env->GetMethodID(javaClass, "<init>", "()V");
-    jobject javaObjectRef = this->_env->NewObject(javaClass, javaClassConstructor);
+    jmethodID javaClassConstructor = this->_env->GetMethodID(this->_calleeClass, "<init>", "()V");
+    jobject javaObjectRef = this->_env->NewObject(this->_calleeClass, javaClassConstructor);
 
     jstring arg = this->_env->NewStringUTF(input_arg.c_str());
     this->_env->CallVoidMethod(javaObjectRef, javaMethodRef, arg);
     return;
 }
+
+
+
+
