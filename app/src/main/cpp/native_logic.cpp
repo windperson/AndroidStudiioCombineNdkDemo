@@ -13,6 +13,33 @@ using namespace std;
 
 
 extern "C"
+
+static JavaVM* vm_ref;
+
+jint JNI_OnLoad(JavaVM* vm, void* reserved){
+    vm_ref = vm;
+    JNIEnv *env;
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK){
+        return JNI_VERSION_1_6;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_4) == JNI_OK){
+        return JNI_VERSION_1_4;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_2) == JNI_OK){
+        return JNI_VERSION_1_2;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_1) == JNI_OK){
+        return JNI_VERSION_1_1;
+    }
+
+    return JNI_EVERSION;
+}
+
+
 JNIEXPORT
 void Java_tw_idv_windperson_androidstudiocombinendkdemo_MainActivity_beginJNIcallJavaDemo(
         JNIEnv *env,
@@ -22,6 +49,8 @@ void Java_tw_idv_windperson_androidstudiocombinendkdemo_MainActivity_beginJNIcal
     LOGINFO("init a CPP object that will call Java method!");
     string input = (*env).GetStringUTFChars(prefix, 0);
     LOGINFO("prefix=%s", input.c_str());
+
+
 
     Native_caller run = Native_caller(env,
                                     "tw/idv/windperson/androidstudiocombinendkdemo/NativeCallee");

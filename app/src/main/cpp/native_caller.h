@@ -11,7 +11,7 @@ private:
     jclass _calleeClass;
     jclass initJavaClassRef();
 public:
-    Native_caller(JNIEnv*,std::string);
+    Native_caller(JNIEnv* jniEnv, std::string classFullName);
     ~Native_caller();
     void invokeJavaMethod(std::string, const char* , std::string);
 };

@@ -3,6 +3,7 @@
 //
 
 #include "native_caller.h"
+#include "JNI_Helper.h"
 
 using namespace std;
 
@@ -11,9 +12,8 @@ using namespace std;
 #define LOGINFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 
-Native_caller::Native_caller(JNIEnv *env, string classPath) {
-    this->_env = env;
-    this->_classPath = classPath;
+Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName):
+        _env(jniEnv), _classPath(classFullName) {
     this->_calleeClass = initJavaClassRef();
 }
 
@@ -30,6 +30,12 @@ jclass Native_caller::initJavaClassRef() {
 Native_caller::~Native_caller() {
     if(this->_calleeClass != NULL){
         this->_env->DeleteGlobalRef(this->_calleeClass);
+    }
+    bool cleanUp = JNI_Helper::cleanupJNIEnv(this->_env);
+    if(cleanUp){
+        LOGINFO("cleanup success");
+    }else{
+        LOGINFO("cleanup failed!");
     }
 }
 
