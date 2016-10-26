@@ -13,6 +13,9 @@
 
 static JNI_Helper *singleton = NULL;
 
+
+
+
 JNI_Helper* JNI_Helper::getInstance(JavaVM *vm, jint jni_version) {
     if(singleton){
         return singleton;
@@ -68,6 +71,34 @@ bool JNI_Helper::cleanupJNIEnv(JNIEnv *jniEnv) {
     }
     return false;
 }
+
+jint JNI_Helper::OnLoadJNIVersionCheck(JavaVM *vm) {
+    JNIEnv *env = NULL;
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK){
+        LOGINFO("Runtime JNI Version=JNI_VERSION_1_6");
+        return JNI_VERSION_1_6;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_4) == JNI_OK){
+        LOGINFO("Runtime JNI Version=JNI_VERSION_1_4");
+        return JNI_VERSION_1_4;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_2) == JNI_OK){
+        LOGINFO("Runtime JNI Version=JNI_VERSION_1_2");
+        return JNI_VERSION_1_2;
+    }
+
+    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_1) == JNI_OK){
+        LOGINFO("Runtime JNI Version=JNI_VERSION_1_1");
+        return JNI_VERSION_1_1;
+    }
+
+    LOGERROR("CAN NOT Detect JNI Version!");
+    return JNI_EVERSION;
+}
+
 
 jint determineJNI_Env_Valid(JavaVM *vm, JNIEnv *env, jint jni_version) {
     JNIEnv *testEnv = env;

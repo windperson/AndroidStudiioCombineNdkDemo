@@ -22,7 +22,7 @@ jclass Native_caller::initJavaClassRef() {
     const char *classFullName = this->_classPath.c_str();
     jclass javaClass = this->_env->FindClass(classFullName);
     if (this->_env->ExceptionCheck()){
-        this->_env->ExceptionClear();
+        this->_env->ExceptionDescribe();
         return JNI_FALSE;
     }
     jclass ret = reinterpret_cast<jclass>( this->_env->NewGlobalRef(javaClass));
@@ -52,6 +52,9 @@ void Native_caller::invokeJavaMethod(string methodName, const char *methodSignat
 
     jstring arg = this->_env->NewStringUTF(input_arg.c_str());
     this->_env->CallVoidMethod(javaObjectRef, javaMethodRef, arg);
+    if(this->_env->ExceptionCheck()){
+        this->_env->ExceptionDescribe();
+    }
     return;
 }
 

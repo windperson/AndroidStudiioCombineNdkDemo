@@ -13,28 +13,14 @@ using namespace std;
 #define LOGINFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 static JavaVM* vm_ref;
+static jint RUNTIME_JNI_VERSION;
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved){
     vm_ref = vm;
-    JNIEnv *env;
 
-    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK){
-        return JNI_VERSION_1_6;
-    }
+    RUNTIME_JNI_VERSION = JNI_Helper::OnLoadJNIVersionCheck(vm);
 
-    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_4) == JNI_OK){
-        return JNI_VERSION_1_4;
-    }
-
-    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_2) == JNI_OK){
-        return JNI_VERSION_1_2;
-    }
-
-    if((*vm).GetEnv((void **) &env, JNI_VERSION_1_1) == JNI_OK){
-        return JNI_VERSION_1_1;
-    }
-
-    return JNI_EVERSION;
+    return RUNTIME_JNI_VERSION;
 }
 
 extern "C"
@@ -48,8 +34,7 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_beginJNIcallJ
     const char* input = (*env).GetStringUTFChars(prefix, 0);
     LOGINFO("prefix=%s", input);
 
-
-    JNI_Helper *helper = JNI_Helper::getInstance(vm_ref, JNI_VERSION_1_6);
+    JNI_Helper *helper = JNI_Helper::getInstance(vm_ref, RUNTIME_JNI_VERSION);
 
     Native_caller run = helper->getJavaCaller("tw/idv/windperson/androidstudiocmakendkdemo/NativeCallee");
     run.invokeJavaMethod("javaCalleeMethod", "(Ljava/lang/String;)V", input);
