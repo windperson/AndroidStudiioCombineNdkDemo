@@ -2,9 +2,14 @@
 // Created by windperson on 10/24/2016.
 //
 
+#ifndef Include_JNI_Helper_H
+#define Include_JNI_Helper_H
+
+
 #include <jni.h>
 #include <string>
 #include "native_caller.h"
+
 
 class JNI_Helper {
 private:
@@ -20,3 +25,4 @@ public:
     JNIEnv *getJNIEnv(bool* isDetached);
 };
 
+#endif

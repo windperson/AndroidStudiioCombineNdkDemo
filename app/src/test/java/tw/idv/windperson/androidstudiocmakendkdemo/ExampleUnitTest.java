@@ -1,4 +1,4 @@
-package tw.idv.windperson.androidstudiocombinendkdemo;
+package tw.idv.windperson.androidstudiocmakendkdemo;
 
 import org.junit.Test;
 

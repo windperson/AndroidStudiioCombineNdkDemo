@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AndroidStudioCombineNdkDemo.iml" filepath="$PROJECT_DIR$/AndroidStudioCombineNdkDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudioCMakeNdkDemo.iml" filepath="$PROJECT_DIR$/AndroidStudioCMakeNdkDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

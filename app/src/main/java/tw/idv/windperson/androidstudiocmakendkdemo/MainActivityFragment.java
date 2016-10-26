@@ -1,4 +1,4 @@
-package tw.idv.windperson.androidstudiocombinendkdemo;
+package tw.idv.windperson.androidstudiocmakendkdemo;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

@@ -1,10 +1,7 @@
-package tw.idv.windperson.androidstudiocombinendkdemo;
+package tw.idv.windperson.androidstudiocmakendkdemo;
 
 import android.util.Log;
 
-/**
- * Created by windperson on 10/8/2016.
- */
 
 public class NativeCallee {
     private static String TAG = "NativeCallee(Java)";

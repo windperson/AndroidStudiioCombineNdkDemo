@@ -10,6 +10,7 @@ using namespace std;
 #include <android/log.h>
 #define LOG_TAG "native_caller"
 #define LOGINFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define LOGERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 
 Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName):
@@ -18,7 +19,8 @@ Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName):
 }
 
 jclass Native_caller::initJavaClassRef() {
-    jclass javaClass = this->_env->FindClass(this->_classPath.c_str());
+    const char *classFullName = this->_classPath.c_str();
+    jclass javaClass = this->_env->FindClass(classFullName);
     if (this->_env->ExceptionCheck()){
         this->_env->ExceptionClear();
         return JNI_FALSE;
@@ -32,10 +34,8 @@ Native_caller::~Native_caller() {
         this->_env->DeleteGlobalRef(this->_calleeClass);
     }
     bool cleanUp = JNI_Helper::cleanupJNIEnv(this->_env);
-    if(cleanUp){
-        LOGINFO("cleanup success");
-    }else{
-        LOGINFO("cleanup failed!");
+    if(!cleanUp){
+        LOGERROR("cleanup GlobalRef failed!");
     }
 }
 
