@@ -23,7 +23,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved){
     return RUNTIME_JNI_VERSION;
 }
 
-extern "C"
+extern "C" {
+
 JNIEXPORT
 void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_beginJNIcallJavaDemo(
         JNIEnv *env,
@@ -42,6 +43,26 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_beginJNIcallJ
 
     return;
 }
+
+
+JNIEXPORT
+void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_callJavaInMultiThreadDemo(
+        JNIEnv *env,
+        jclass type,
+        jstring prefix_) {
+    LOGINFO("init a CPP object that will call Java method in UnAttached Native Thread!");
+    const char *input = env->GetStringUTFChars(prefix_, 0);
+    LOGINFO("prefix=%s", input);
+
+    // TODO
+
+    env->ReleaseStringUTFChars(prefix_, input);
+}
+
+
+}
+
+
 
 
 

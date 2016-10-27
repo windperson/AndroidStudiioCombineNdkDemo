@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
         SetupC2Jbtn();
+        SetupC2JMbtn();
     }
 
     private void SetupC2Jbtn() {
@@ -53,6 +54,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void SetupC2JMbtn() {
+        Button invokeBtn = (Button) findViewById(R.id.demo_c2j_multi);
+        invokeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callJavaInMultiThreadDemo("pthread invoke");
+            }
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,5 +95,6 @@ public class MainActivity extends AppCompatActivity {
     public native String stringFromJNI();
 
     private static native void beginJNIcallJavaDemo(String prefix);
+    private static native void callJavaInMultiThreadDemo(String prefix);
 
 }

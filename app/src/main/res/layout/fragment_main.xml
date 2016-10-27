@@ -30,4 +30,16 @@
         android:layout_marginTop="35dp"
         android:id="@+id/demo_c2j"/>
 
+    <Button
+        android:text="@string/c2j_multi_btn_res"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/demo_c2j"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="35dp"
+        android:id="@+id/demo_c2j_multi"/>
+
 </RelativeLayout>
