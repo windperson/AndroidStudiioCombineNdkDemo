@@ -5,17 +5,19 @@
 #include "native_logic.h"
 #include "native_caller.h"
 #include "JNI_Helper.h"
+#include "Pthread_Worker.h"
 
 using namespace std;
 
 #include <android/log.h>
+
 #define LOG_TAG "native_logic"
 #define LOGINFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
-static JavaVM* vm_ref;
+static JavaVM *vm_ref;
 static jint RUNTIME_JNI_VERSION;
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved){
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     vm_ref = vm;
 
     RUNTIME_JNI_VERSION = JNI_Helper::OnLoadJNIVersionCheck(vm);
@@ -32,12 +34,13 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_beginJNIcallJ
         jstring prefix) {
     //calling object method to let it call Java method
     LOGINFO("init a CPP object that will call Java method in Attached Native Thread!");
-    const char* input = (*env).GetStringUTFChars(prefix, 0);
+    const char *input = (*env).GetStringUTFChars(prefix, 0);
     LOGINFO("prefix=%s", input);
 
     JNI_Helper *helper = JNI_Helper::getInstance(vm_ref, RUNTIME_JNI_VERSION);
 
-    Native_caller run = helper->getJavaCaller("tw/idv/windperson/androidstudiocmakendkdemo/NativeCallee");
+    Native_caller run = helper->getJavaCaller(
+            "tw/idv/windperson/androidstudiocmakendkdemo/NativeCallee");
     run.invokeJavaMethod("javaCalleeMethod", "(Ljava/lang/String;)V", input);
     env->ReleaseStringUTFChars(prefix, input);
 
@@ -54,8 +57,21 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_callJavaInMul
     const char *input = env->GetStringUTFChars(prefix_, 0);
     LOGINFO("prefix=%s", input);
 
-    // TODO
+    for (int i = 0; i < 1; i++) {
+        ThreadWorkerArgs *workerInput = new ThreadWorkerArgs();
+        workerInput->id = i;
+        workerInput->input_args = input;
+        workerInput->jni_helper = JNI_Helper::getInstance(vm_ref, RUNTIME_JNI_VERSION);
 
+        pthread_t thread;
+        int result = pthread_create(&thread, NULL, Pthread_Worker::thread_work,
+                                    (void *) workerInput);
+        if (0 != result) {
+            jclass exClass = env->FindClass("java/lang/RuntimeException");
+            env->ThrowNew(exClass, "Unable to create thread.");
+        }
+
+    }
     env->ReleaseStringUTFChars(prefix_, input);
 }
 

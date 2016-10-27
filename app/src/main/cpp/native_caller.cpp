@@ -19,13 +19,16 @@ Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName):
 }
 
 jclass Native_caller::initJavaClassRef() {
+    jclass ret = NULL;
     const char *classFullName = this->_classPath.c_str();
     jclass javaClass = this->_env->FindClass(classFullName);
-    if (this->_env->ExceptionCheck()){
-        this->_env->ExceptionDescribe();
-        return JNI_FALSE;
+    jthrowable loadingEx = this->_env->ExceptionOccurred();
+    if (loadingEx != NULL){
+        this->_env->ExceptionClear();
+        //using JNI_Helper's findClass method to try to load again.
+         javaClass = JNIHelper->findClass(classFullName, this->_env);
     }
-    jclass ret = reinterpret_cast<jclass>( this->_env->NewGlobalRef(javaClass));
+    ret = reinterpret_cast<jclass>( this->_env->NewGlobalRef(javaClass));
     return ret;
 }
 
@@ -33,7 +36,7 @@ Native_caller::~Native_caller() {
     if(this->_calleeClass != NULL){
         this->_env->DeleteGlobalRef(this->_calleeClass);
     }
-    bool cleanUp = JNI_Helper::cleanupJNIEnv(this->_env);
+    bool cleanUp = JNI_Helper::cleanupJNIEnv(this->_env, this->Detached);
     if(!cleanUp){
         LOGERROR("cleanup GlobalRef failed!");
     }

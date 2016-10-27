@@ -20,10 +20,13 @@ private:
 public:
     static jint OnLoadJNIVersionCheck(JavaVM *vm);
     static JNI_Helper* getInstance(JavaVM* vm, jint jni_version);
-    static bool cleanupJNIEnv(JNIEnv *jniEnv);
+    static jint determineJNI_Env_Valid(JavaVM *vm, JNIEnv *env, jint jni_version);
+    static bool cleanupJNIEnv(JNIEnv *jniEnv, bool isDetached);
     Native_caller getJavaCaller(std::string classFullName);
+    ~JNI_Helper();
 
     JNIEnv *getJNIEnv(bool* isDetached);
+    jclass findClass(const char* name, JNIEnv *env);
 };
 
 #endif

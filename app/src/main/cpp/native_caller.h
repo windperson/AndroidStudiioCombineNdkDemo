@@ -9,6 +9,8 @@
 #include <jni.h>
 #include <string>
 
+class JNI_Helper;
+
 
 class Native_caller {
 private:
@@ -19,6 +21,8 @@ private:
 public:
     Native_caller(JNIEnv* jniEnv, std::string classFullName);
     ~Native_caller();
+    bool Detached = false;
+    JNI_Helper *JNIHelper;
     void invokeJavaMethod(std::string, const char* , std::string);
 };
 
