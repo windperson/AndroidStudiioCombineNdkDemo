@@ -1,7 +1,3 @@
-//
-// Created by windperson on 10/24/2016.
-//
-
 #ifndef Include_JNI_Helper_H
 #define Include_JNI_Helper_H
 

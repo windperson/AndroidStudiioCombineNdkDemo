@@ -1,7 +1,3 @@
-//
-// Created by windperson on 10/10/2016.
-//
-
 #ifndef Include_Native_Caller_H
 #define Include_Native_Caller_H
 

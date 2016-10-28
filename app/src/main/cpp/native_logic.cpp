@@ -1,7 +1,3 @@
-//
-// Created by windperson on 10/7/2016.
-//
-
 #include "native_logic.h"
 #include "native_caller.h"
 #include "JNI_Helper.h"
@@ -76,7 +72,6 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_callJavaInMul
     }
     env->ReleaseStringUTFChars(prefix_, input);
 }
-
 
 }
 

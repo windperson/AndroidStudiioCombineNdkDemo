@@ -1,7 +1,3 @@
-//
-// Created by isak on 10/10/2016.
-//
-
 #include "native_caller.h"
 #include "JNI_Helper.h"
 

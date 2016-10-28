@@ -1,7 +1,3 @@
-//
-// Created by windperson on 10/24/2016.
-//
-
 #include <cwchar>
 #include "JNI_Helper.h"
 

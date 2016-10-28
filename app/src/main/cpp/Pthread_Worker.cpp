@@ -1,4 +1,3 @@
-#include <pthread.h>
 #include <cwchar>
 #include <sstream>
 #include "Pthread_Worker.h"
