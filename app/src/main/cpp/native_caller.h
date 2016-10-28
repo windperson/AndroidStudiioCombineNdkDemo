@@ -21,7 +21,7 @@ private:
 public:
     Native_caller(JNIEnv* jniEnv, std::string classFullName);
     ~Native_caller();
-    bool Detached = false;
+    bool Detached;
     JNI_Helper *JNIHelper;
     void invokeJavaMethod(std::string, const char* , std::string);
 };

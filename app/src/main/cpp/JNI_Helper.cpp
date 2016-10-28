@@ -11,12 +11,6 @@
 #define LOGERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 
-static JNI_Helper *singleton = NULL;
-
-static jobject _classLoader = NULL;
-static jmethodID _findClassMethod = NULL;
-
-
 JNI_Helper* JNI_Helper::getInstance(JavaVM *vm, jint jni_version) {
     if(singleton){
         return singleton;
@@ -27,8 +21,10 @@ JNI_Helper* JNI_Helper::getInstance(JavaVM *vm, jint jni_version) {
 
 JNIEnv* JNI_Helper::getJNIEnv(bool* isDetached) {
     JNIEnv *env = NULL;
-    bool initBoolean = false;
-    *isDetached = initBoolean;
+    if(isDetached != NULL){
+        bool initBoolean = false;
+        *isDetached = initBoolean;
+    }
     jint status = JNI_Helper::determineJNI_Env_Valid(singleton->_vm, env, singleton->_jni_ver);
     if(status == JNI_EDETACHED){
         _vm->AttachCurrentThread(&env, NULL);
@@ -73,14 +69,14 @@ Native_caller JNI_Helper::getJavaCaller(std::string classFullName) {
     return run;
 }
 
-void getClassLoader(JNIEnv *env){
-    jclass targetClass = env->FindClass("tw/idv/windperson/androidstudiocmakendkdemo/NativeCallee");
+void JNI_Helper::setupThreadedClassLoader(JNIEnv *env, const char *classFullName){
+    jclass targetClass = env->FindClass(classFullName);
     jclass applicationMetaClass = env->GetObjectClass(targetClass);
     jclass classLoaderClass = env->FindClass("java/lang/ClassLoader");
     jmethodID getClassLoaderMethod = env->GetMethodID(applicationMetaClass,"getClassLoader","()Ljava/lang/ClassLoader;");
-    _classLoader = reinterpret_cast<jclass>( env->NewGlobalRef(
+    this->threadedClassLoader.ClassLoader = reinterpret_cast<jclass>( env->NewGlobalRef(
             env->CallObjectMethod(targetClass, getClassLoaderMethod)));
-    _findClassMethod = env->GetMethodID(classLoaderClass, "findClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    this->threadedClassLoader.FindClassMethod = env->GetMethodID(classLoaderClass, "findClass", "(Ljava/lang/String;)Ljava/lang/Class;");
 }
 
 jint JNI_Helper::OnLoadJNIVersionCheck(JavaVM *vm) {
@@ -88,25 +84,21 @@ jint JNI_Helper::OnLoadJNIVersionCheck(JavaVM *vm) {
 
     if((*vm).GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK){
         LOGINFO("Runtime JNI Version=JNI_VERSION_1_6");
-        getClassLoader(env);
         return JNI_VERSION_1_6;
     }
 
     if((*vm).GetEnv((void **) &env, JNI_VERSION_1_4) == JNI_OK){
         LOGINFO("Runtime JNI Version=JNI_VERSION_1_4");
-        getClassLoader(env);
         return JNI_VERSION_1_4;
     }
 
     if((*vm).GetEnv((void **) &env, JNI_VERSION_1_2) == JNI_OK){
         LOGINFO("Runtime JNI Version=JNI_VERSION_1_2");
-        getClassLoader(env);
         return JNI_VERSION_1_2;
     }
 
     if((*vm).GetEnv((void **) &env, JNI_VERSION_1_1) == JNI_OK){
         LOGINFO("Runtime JNI Version=JNI_VERSION_1_1");
-        getClassLoader(env);
         return JNI_VERSION_1_1;
     }
 
@@ -115,7 +107,8 @@ jint JNI_Helper::OnLoadJNIVersionCheck(JavaVM *vm) {
 }
 
 jclass JNI_Helper::findClass(const char *name, JNIEnv *env) {
-    return static_cast<jclass>(env->CallObjectMethod(_classLoader, _findClassMethod, env->NewStringUTF(name)));
+    return static_cast<jclass>(env->CallObjectMethod(this->threadedClassLoader.ClassLoader,
+                                                     this->threadedClassLoader.FindClassMethod, env->NewStringUTF(name)));
 }
 
 jint JNI_Helper::determineJNI_Env_Valid(JavaVM *vm, JNIEnv *env, jint jni_version) {
@@ -126,12 +119,13 @@ jint JNI_Helper::determineJNI_Env_Valid(JavaVM *vm, JNIEnv *env, jint jni_versio
 }
 
 JNI_Helper::~JNI_Helper() {
-    if(_classLoader != NULL){
+    if(this->threadedClassLoader.ClassLoader != NULL){
         bool isDetached = false;
         JNIEnv *env = getJNIEnv(&isDetached);
-        env->DeleteGlobalRef(_classLoader);
-        _classLoader = NULL;
+        env->DeleteGlobalRef(this->threadedClassLoader.ClassLoader);
+        this->threadedClassLoader.ClassLoader = NULL;
     }
+
 }
 
 

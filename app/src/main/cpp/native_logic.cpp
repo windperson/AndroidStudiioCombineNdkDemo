@@ -62,6 +62,8 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_callJavaInMul
         workerInput->id = i;
         workerInput->input_args = input;
         workerInput->jni_helper = JNI_Helper::getInstance(vm_ref, RUNTIME_JNI_VERSION);
+        workerInput->jni_helper->setupThreadedClassLoader(workerInput->jni_helper->getJNIEnv(NULL),
+                                                          "tw/idv/windperson/androidstudiocmakendkdemo/ClassLoaderProbe");
 
         pthread_t thread;
         int result = pthread_create(&thread, NULL, Pthread_Worker::thread_work,

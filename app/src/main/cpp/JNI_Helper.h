@@ -10,9 +10,15 @@
 #include <string>
 #include "native_caller.h"
 
+struct ThreadedClassLoader{
+    jobject ClassLoader;
+    jmethodID FindClassMethod;
+
+};
 
 class JNI_Helper {
 private:
+    static JNI_Helper *singleton;
     JavaVM *_vm;
     jint _jni_ver;
     JNI_Helper(JavaVM* vm, jint jni_version);
@@ -25,8 +31,12 @@ public:
     Native_caller getJavaCaller(std::string classFullName);
     ~JNI_Helper();
 
+    ThreadedClassLoader threadedClassLoader;
+    void setupThreadedClassLoader(JNIEnv *env, const char *classFullName);
     JNIEnv *getJNIEnv(bool* isDetached);
     jclass findClass(const char* name, JNIEnv *env);
 };
+
+
 
 #endif

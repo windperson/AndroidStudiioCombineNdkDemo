@@ -26,7 +26,7 @@ jclass Native_caller::initJavaClassRef() {
     if (loadingEx != NULL){
         this->_env->ExceptionClear();
         //using JNI_Helper's findClass method to try to load again.
-         javaClass = JNIHelper->findClass(classFullName, this->_env);
+         javaClass = this->JNIHelper->findClass(classFullName, this->_env);
     }
     ret = reinterpret_cast<jclass>( this->_env->NewGlobalRef(javaClass));
     return ret;
