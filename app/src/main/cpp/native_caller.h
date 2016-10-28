@@ -8,6 +8,7 @@
 
 #include <jni.h>
 #include <string>
+#include "JNI_Helper.h"
 
 class JNI_Helper;
 
@@ -19,7 +20,7 @@ private:
     jclass _calleeClass;
     jclass initJavaClassRef();
 public:
-    Native_caller(JNIEnv* jniEnv, std::string classFullName);
+    Native_caller(JNIEnv* jniEnv, std::string classFullName, JNI_Helper *jniHelper);
     ~Native_caller();
     bool Detached;
     JNI_Helper *JNIHelper;

@@ -16,6 +16,8 @@ struct ThreadedClassLoader{
 
 };
 
+class Native_caller;
+
 class JNI_Helper {
 private:
     static JNI_Helper *singleton;

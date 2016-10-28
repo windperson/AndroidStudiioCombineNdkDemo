@@ -13,8 +13,9 @@ using namespace std;
 #define LOGERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 
-Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName):
+Native_caller::Native_caller(JNIEnv* jniEnv, std::string classFullName, JNI_Helper *jniHelper):
         _env(jniEnv), _classPath(classFullName) {
+    this->JNIHelper = jniHelper;
     this->_calleeClass = initJavaClassRef();
 }
 

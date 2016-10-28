@@ -11,12 +11,14 @@
 #define LOGERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 
+JNI_Helper *JNI_Helper::singleton = NULL;
+
 JNI_Helper* JNI_Helper::getInstance(JavaVM *vm, jint jni_version) {
-    if(singleton){
-        return singleton;
+    if(JNI_Helper::singleton){
+        return JNI_Helper::singleton;
     }
-    singleton = new JNI_Helper(vm, jni_version);
-    return singleton;
+    JNI_Helper::singleton = new JNI_Helper(vm, jni_version);
+    return JNI_Helper::singleton;
 }
 
 JNIEnv* JNI_Helper::getJNIEnv(bool* isDetached) {
@@ -25,7 +27,7 @@ JNIEnv* JNI_Helper::getJNIEnv(bool* isDetached) {
         bool initBoolean = false;
         *isDetached = initBoolean;
     }
-    jint status = JNI_Helper::determineJNI_Env_Valid(singleton->_vm, env, singleton->_jni_ver);
+    jint status = JNI_Helper::determineJNI_Env_Valid(JNI_Helper::singleton->_vm, env, JNI_Helper::singleton->_jni_ver);
     if(status == JNI_EDETACHED){
         _vm->AttachCurrentThread(&env, NULL);
         *isDetached = true;
@@ -35,7 +37,7 @@ JNIEnv* JNI_Helper::getJNIEnv(bool* isDetached) {
         LOGERROR("JNI_VERSION error");
     }
     else{
-        jint getStatus = singleton->_vm->GetEnv((void **)&env, singleton->_jni_ver);
+        jint getStatus = JNI_Helper::singleton->_vm->GetEnv((void **)&env, JNI_Helper::singleton->_jni_ver);
         if(getStatus != JNI_OK){
             LOGERROR("Cannot get JEnv");
         }
@@ -47,9 +49,9 @@ JNI_Helper::JNI_Helper(JavaVM *vm, jint jni_version) : _vm(vm), _jni_ver(jni_ver
 }
 
 bool JNI_Helper::cleanupJNIEnv(JNIEnv *jniEnv, bool isDetached) {
-    if(singleton){
+    if(JNI_Helper::singleton){
         if(isDetached){
-            jint apiStatus = singleton->_vm->DetachCurrentThread();
+            jint apiStatus = JNI_Helper::singleton->_vm->DetachCurrentThread();
             return apiStatus == JNI_OK;
         }
         else{
@@ -63,9 +65,8 @@ Native_caller JNI_Helper::getJavaCaller(std::string classFullName) {
     bool isDetached = false;
     JNIEnv *env = getJNIEnv(&isDetached);
 
-    Native_caller run = Native_caller(env,classFullName);
+    Native_caller run = Native_caller(env, classFullName, JNI_Helper::singleton);
     run.Detached = isDetached;
-    run.JNIHelper = singleton;
     return run;
 }
 
@@ -127,11 +128,3 @@ JNI_Helper::~JNI_Helper() {
     }
 
 }
-
-
-
-
-
-
-
-
