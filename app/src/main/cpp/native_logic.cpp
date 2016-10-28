@@ -57,7 +57,7 @@ void Java_tw_idv_windperson_androidstudiocmakendkdemo_MainActivity_callJavaInMul
     const char *input = env->GetStringUTFChars(prefix_, 0);
     LOGINFO("prefix=%s", input);
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
         ThreadWorkerArgs *workerInput = new ThreadWorkerArgs();
         workerInput->id = i;
         workerInput->input_args = input;
