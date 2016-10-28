@@ -1,5 +1,4 @@
 #include "native_caller.h"
-#include "JNI_Helper.h"
 
 using namespace std;
 
